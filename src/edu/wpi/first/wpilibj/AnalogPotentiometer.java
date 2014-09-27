@@ -14,14 +14,6 @@ public class AnalogPotentiometer extends AnalogDevice {
 		super( channel );
 	}
 	
-	protected String getDrawValue() {
-		return String.format( "%.2f", value );
-	}
-	
-	protected Color selectStatusColor() {
-		return STATUS;
-	}
-	
 	public double get() {
 		return value;
 	}
@@ -53,6 +45,17 @@ public class AnalogPotentiometer extends AnalogDevice {
 		}
 	}
 	
+	@Override
+	protected String getDrawValue() {
+		return String.format( "%.2f", value );
+	}
+	
+	@Override
+	protected Color selectStatusColor() {
+		return STATUS;
+	}
+	
+	@Override
 	public void zero() {
 		value = 0.0;
 	}

@@ -34,53 +34,53 @@ public class Joystick {
 		}
 	}
 	
-	private DriverStation m_ds;
-	private final int m_port;
-	private final byte[] m_axes;
-	private final byte[] m_buttons;
+	private DriverStation ds;
+	private final int port;
+	private final byte[] axes;
+	private final byte[] buttons;
 	
 	public Joystick( final int port ) {
 		this( port, AxisType.values().length, ButtonType.values().length );
 		
-		m_axes[AxisType.kX.value] = kDefaultXAxis;
-		m_axes[AxisType.kY.value] = kDefaultYAxis;
-		m_axes[AxisType.kZ.value] = kDefaultZAxis;
-		m_axes[AxisType.kTwist.value] = kDefaultTwistAxis;
-		m_axes[AxisType.kThrottle.value] = kDefaultThrottleAxis;
+		axes[AxisType.kX.value] = kDefaultXAxis;
+		axes[AxisType.kY.value] = kDefaultYAxis;
+		axes[AxisType.kZ.value] = kDefaultZAxis;
+		axes[AxisType.kTwist.value] = kDefaultTwistAxis;
+		axes[AxisType.kThrottle.value] = kDefaultThrottleAxis;
 		
-		m_buttons[ButtonType.kTrigger.value] = kDefaultTriggerButton;
-		m_buttons[ButtonType.kTop.value] = kDefaultTopButton;
+		buttons[ButtonType.kTrigger.value] = kDefaultTriggerButton;
+		buttons[ButtonType.kTop.value] = kDefaultTopButton;
 	}
 	
 	protected Joystick( int port, int numAxisTypes, int numButtonTypes ) {
-		m_ds = DriverStation.getInstance();
-		m_axes = new byte[numAxisTypes];
-		m_buttons = new byte[numButtonTypes];
-		m_port = port;
+		ds = DriverStation.getInstance();
+		axes = new byte[numAxisTypes];
+		buttons = new byte[numButtonTypes];
+		this.port = port;
 	}
 	
 	public double getX() {
-		return getRawAxis( m_axes[AxisType.kX.value] );
+		return getRawAxis( axes[AxisType.kX.value] );
 	}
 	
 	public double getY() {
-		return getRawAxis( m_axes[AxisType.kY.value] );
+		return getRawAxis( axes[AxisType.kY.value] );
 	}
 	
 	public double getZ() {
-		return getRawAxis( m_axes[AxisType.kZ.value] );
+		return getRawAxis( axes[AxisType.kZ.value] );
 	}
 	
 	public double getTwist() {
-		return getRawAxis( m_axes[AxisType.kTwist.value] );
+		return getRawAxis( axes[AxisType.kTwist.value] );
 	}
 	
 	public double getThrottle() {
-		return getRawAxis( m_axes[AxisType.kThrottle.value] );
+		return getRawAxis( axes[AxisType.kThrottle.value] );
 	}
 	
 	public double getRawAxis( final int axis ) {
-		return m_ds.getStickAxis( m_port, axis );
+		return ds.getStickAxis( port, axis );
 	}
 	
 	public double getAxis( final AxisType axis ) {
@@ -101,11 +101,11 @@ public class Joystick {
 	}
 	
 	public boolean getTrigger() {
-		return getRawButton( m_buttons[ButtonType.kTrigger.value] );
+		return getRawButton( buttons[ButtonType.kTrigger.value] );
 	}
 	
 	public boolean getTop() {
-		return getRawButton( m_buttons[ButtonType.kTop.value] );
+		return getRawButton( buttons[ButtonType.kTop.value] );
 	}
 	
 	public boolean getBumper() {
@@ -113,7 +113,7 @@ public class Joystick {
 	}
 	
 	public boolean getRawButton( final int button ) {
-		return m_ds.getStickButton( m_port, button );
+		return ds.getStickButton( port, button );
 	}
 	
 	public boolean getButton( ButtonType button ) {
@@ -140,10 +140,10 @@ public class Joystick {
 	}
 	
 	public int getAxisChannel( AxisType axis ) {
-		return m_axes[axis.value];
+		return axes[axis.value];
 	}
 	
 	public void setAxisChannel( AxisType axis, int channel ) {
-		m_axes[axis.value] = (byte) channel;
+		axes[axis.value] = (byte) channel;
 	}
 }

@@ -108,6 +108,12 @@ public class ReorderableJList<E> extends JPanel {
 		list.setModel( lm );
 	}
 	
+	public void clear() {
+		DefaultListModel<E> lm = getDefaultListModel();
+		lm.clear();
+		list.setModel( lm );
+	}
+	
 	public JList<E> getList() {
 		return list;
 	}

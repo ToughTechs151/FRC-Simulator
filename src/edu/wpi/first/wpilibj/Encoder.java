@@ -27,14 +27,6 @@ public class Encoder extends DIODevice {
 		this.reversed = reversed;
 	}
 	
-	protected String getDrawValue() {
-		return String.format( "%.2f", getDistance() );
-	}
-	
-	protected Color selectStatusColor() {
-		return STATUS;
-	}
-	
 	public double get() {
 		return pulses;
 	}
@@ -44,7 +36,9 @@ public class Encoder extends DIODevice {
 	}
 	
 	public void increment( double inc ) {
-		pulses += reversed ? -inc : inc;
+		if ( running ) {
+			pulses += reversed ? -inc : inc;
+		}
 	}
 	
 	public void start() {
@@ -59,6 +53,17 @@ public class Encoder extends DIODevice {
 		zero();
 	}
 	
+	@Override
+	protected String getDrawValue() {
+		return String.format( "%.2f", getDistance() );
+	}
+	
+	@Override
+	protected Color selectStatusColor() {
+		return STATUS;
+	}
+	
+	@Override
 	public void zero() {
 		pulses = 0.0;
 	}

@@ -8,7 +8,6 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -18,12 +17,13 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
+import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier.Axis;
 import net.java.games.input.Component.Identifier.Button;
 import net.java.games.input.Controller;
-import net.java.games.input.ControllerEnvironment;
-import net.java.games.input.ControllerEvent;
-import net.java.games.input.ControllerListener;
+import net.java.games.input.DirectAndRawInputEnvironmentPlugin;
+import net.java.games.input.LinuxEnvironmentPlugin;
+import net.java.games.input.OSXEnvironmentPlugin;
 import edu.wpi.first.wpilibj.ui.SleekFrame;
 import edu.wpi.first.wpilibj.util.Console;
 import edu.wpi.first.wpilibj.util.SwingUtils;
@@ -35,10 +35,11 @@ public class DriverStation {
 	
 	private JButton enable = new JButton( "ENABLE" );
 	private JButton disable = new JButton( "DISABLE" );
+	private JButton refresh = new JButton( "Refresh Joysticks" );
 	private JRadioButton autonomous = new JRadioButton( "Autonomous" );
 	private JRadioButton operatorControl = new JRadioButton( "Teleoperated" );
 	private JRadioButton test = new JRadioButton( "Test" );
-	private ReorderableJList<Controller> joysticks;
+	private final ReorderableJList<Controller> joysticks = new ReorderableJList<Controller>();
 	private boolean enabled = false;
 	
 	public static DriverStation getInstance() {
@@ -60,33 +61,7 @@ public class DriverStation {
 		RoboRIO.getInstance();
 		
 		// Add currently connected joysticks to list
-		ArrayList<Controller> sticks = new ArrayList<Controller>();
-		Controller[] all = ControllerEnvironment.getDefaultEnvironment().getControllers();
-		for ( int i = 0; i < all.length; i++ ) {
-			if ( validType( all[i].getType() ) ) {
-				sticks.add( all[i] );
-			}
-		}
-		joysticks = new ReorderableJList<Controller>( sticks.toArray( new Controller[sticks.size()] ) );
-		
-		// Add a listener to check for joysticks being added or removed
-		ControllerEnvironment.getDefaultEnvironment().addControllerListener( new ControllerListener() {
-			DefaultListModel<Controller> model = joysticks.getDefaultListModel();
-			
-			public void controllerRemoved( ControllerEvent ev ) {
-				Controller c = ev.getController();
-				if ( validType( c.getType() ) && model.contains( c ) ) {
-					joysticks.removeElement( c );
-				}
-			}
-			
-			public void controllerAdded( ControllerEvent ev ) {
-				Controller c = ev.getController();
-				if ( validType( c.getType() )) {
-					joysticks.addElement( c );
-				}
-			}
-		} );
+		refreshControllers();
 		
 		// Create GUI
 		frame = new SleekFrame( "Driver Station" );
@@ -149,7 +124,17 @@ public class DriverStation {
 		modeState.add( states );
 		
 		controls.add( modeState );
-		controls.add( SwingUtils.placeInTitledEtchedJPanel( joysticks, "Joystick Setup", Color.WHITE ) );
+		
+		//Controller selection panel
+		JPanel controllers = new JPanel(new BorderLayout());
+		controllers.add( joysticks, BorderLayout.CENTER );
+		refresh.addActionListener( new ActionListener() {
+			public void actionPerformed( ActionEvent e ) {
+				refreshControllers();
+			}
+		} );
+		controllers.add( refresh, BorderLayout.SOUTH );
+		controls.add( SwingUtils.placeInTitledEtchedJPanel( controllers, "Joystick Setup", Color.WHITE ) );
 		
 		// Console panel
 		JPanel consolePanel = new JPanel( new BorderLayout() );
@@ -199,14 +184,37 @@ public class DriverStation {
 		return !enabled;
 	}
 	
-	private boolean validType( Controller.Type type ) {
+	private boolean isValidControllerType( Controller.Type type ) {
 		return type == Controller.Type.STICK || type == Controller.Type.GAMEPAD;
+	}
+	
+	private Controller[] getAllControllers() {
+		String os = System.getProperty( "os.name" ).trim().toLowerCase();
+		if(os.contains( "windows" )) {
+			return new DirectAndRawInputEnvironmentPlugin().getControllers();
+		} else if (os.contains( "mac" )) {
+			return new OSXEnvironmentPlugin().getControllers();
+		} else if( os.contains( "linux" )) {
+			return new LinuxEnvironmentPlugin().getControllers();
+		}
+		return null;
+	}
+	
+	private void refreshControllers() {
+		System.out.println("Refreshing controller list...");
+		joysticks.clear();
+		Controller[] all = getAllControllers();
+		for ( int i = 0; i < all.length; i++ ) {
+			if ( isValidControllerType( all[i].getType() ) ) {
+				joysticks.addElement( all[i] );
+			}
+		}
+		System.out.println(joysticks.getList().getModel().getSize() + " controller(s) found.");
 	}
 	
 	private Controller getController( int port ) {
 		DefaultListModel<Controller> model = joysticks.getDefaultListModel();
-		if ( port < 0 && port >= model.size() ) {
-			System.err.println( "Controller " + port + " does not exist!" );
+		if ( port <= 0 || port > model.size() ) {
 			return null;
 		}
 		return model.get( port - 1 );
@@ -223,9 +231,9 @@ public class DriverStation {
 			case 4:
 				return Axis.RZ;
 			case 5:
-				return Axis.RY;
+				return Axis.POV;
 			case 6:
-				return Axis.RX;
+				return Axis.POV;
 			default:
 				return Axis.UNKNOWN;
 		}
@@ -270,7 +278,12 @@ public class DriverStation {
 			return 0.0;
 		}
 		c.poll();
-		return c.getComponent( getAxisFromInt( axis ) ).getPollData();
+		Component comp = c.getComponent( getAxisFromInt( axis ) );
+		if(comp == null) {
+			System.err.println("WARNING: Axis " + axis + " does not exist");
+			return 0.0;
+		}
+		return comp.getPollData();
 	}
 	
 	public boolean getStickButton( int port, int button ) {
