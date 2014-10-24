@@ -125,8 +125,8 @@ public class DriverStation {
 		
 		controls.add( modeState );
 		
-		//Controller selection panel
-		JPanel controllers = new JPanel(new BorderLayout());
+		// Controller selection panel
+		JPanel controllers = new JPanel( new BorderLayout() );
 		controllers.add( joysticks, BorderLayout.CENTER );
 		refresh.addActionListener( new ActionListener() {
 			public void actionPerformed( ActionEvent e ) {
@@ -190,18 +190,18 @@ public class DriverStation {
 	
 	private Controller[] getAllControllers() {
 		String os = System.getProperty( "os.name" ).trim().toLowerCase();
-		if(os.contains( "windows" )) {
+		if ( os.contains( "windows" ) ) {
 			return new DirectAndRawInputEnvironmentPlugin().getControllers();
-		} else if (os.contains( "mac" )) {
+		} else if ( os.contains( "mac" ) ) {
 			return new OSXEnvironmentPlugin().getControllers();
-		} else if( os.contains( "linux" )) {
+		} else if ( os.contains( "linux" ) ) {
 			return new LinuxEnvironmentPlugin().getControllers();
 		}
 		return null;
 	}
 	
 	private void refreshControllers() {
-		System.out.println("Refreshing controller list...");
+		System.out.println( "Refreshing controller list..." );
 		joysticks.clear();
 		Controller[] all = getAllControllers();
 		for ( int i = 0; i < all.length; i++ ) {
@@ -209,7 +209,7 @@ public class DriverStation {
 				joysticks.addElement( all[i] );
 			}
 		}
-		System.out.println(joysticks.getList().getModel().getSize() + " controller(s) found.");
+		System.out.println( joysticks.getList().getModel().getSize() + " controller(s) found." );
 	}
 	
 	private Controller getController( int port ) {
@@ -279,8 +279,8 @@ public class DriverStation {
 		}
 		c.poll();
 		Component comp = c.getComponent( getAxisFromInt( axis ) );
-		if(comp == null) {
-			System.err.println("WARNING: Axis " + axis + " does not exist");
+		if ( comp == null ) {
+			System.err.println( "WARNING: Axis " + axis + " does not exist" );
 			return 0.0;
 		}
 		return comp.getPollData();

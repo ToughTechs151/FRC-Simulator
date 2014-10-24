@@ -31,7 +31,7 @@ public abstract class PWMDevice extends Device {
 	public double get() {
 		return value;
 	}
-
+	
 	protected String getDrawValue() {
 		return String.format( "%.2f", value );
 	}

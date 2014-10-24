@@ -57,7 +57,7 @@ public class Console {
 		private void updateDocument( String text ) {
 			try {
 				doc.insertString( doc.getLength(), text, attributes );
-				String doctext =  doc.getText( 0, doc.getLength() );
+				String doctext = doc.getText( 0, doc.getLength() );
 				int lines = doctext.split( "\n" ).length;
 				if ( lines > MAX_LINES ) {
 					int index = 0;

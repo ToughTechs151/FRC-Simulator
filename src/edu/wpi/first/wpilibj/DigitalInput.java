@@ -27,7 +27,7 @@ public class DigitalInput extends DIODevice {
 	public void set( boolean state ) {
 		this.state = state;
 	}
-
+	
 	public void zero() {
 		set( false );
 	}

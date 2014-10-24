@@ -33,6 +33,7 @@ public class FileIOHelper {
 	
 	/**
 	 * Gets the URL to a file
+	 * 
 	 * @param path Path to the file
 	 * @return URL to file
 	 */
@@ -43,6 +44,7 @@ public class FileIOHelper {
 	
 	/**
 	 * Loads a font
+	 * 
 	 * @param path Path to the font
 	 * @return Loaded font
 	 */
@@ -59,6 +61,7 @@ public class FileIOHelper {
 	
 	/**
 	 * Loads an image and fixes any compatibility issues
+	 * 
 	 * @param path Path to the image
 	 * @return Loaded image
 	 */
@@ -73,6 +76,7 @@ public class FileIOHelper {
 	
 	/**
 	 * Fixes OS-dependent compatibility issues with an image
+	 * 
 	 * @param image Image to check for compatibility issues
 	 * @return Fixed image
 	 */

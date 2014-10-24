@@ -36,18 +36,18 @@ public abstract class Device extends JPanel {
 	public String getName() {
 		return name;
 	}
-
+	
 	public void setName( String name ) {
 		this.name = name;
 	}
-
+	
 	protected void tryChannelRequest( DeviceType type ) {
 		if ( !RoboRIO.getInstance().requestDeviceChannel( this, type ) ) {
 			System.err.println( type.getName() + " channel " + channel + " unavailable, Device will not work!" );
 		}
 	}
 	
-	public void paintComponent(Graphics g) {
+	public void paintComponent( Graphics g ) {
 		drawBG( g );
 		drawValue( g );
 		drawChannel( g );
@@ -55,14 +55,14 @@ public abstract class Device extends JPanel {
 		drawStatusLight( g );
 	}
 	
-	protected void drawBG(Graphics g) {
+	protected void drawBG( Graphics g ) {
 		g.setColor( getBackground() );
 		g.fillRect( 0, 0, getWidth(), getHeight() );
 	}
 	
 	protected abstract String getDrawValue();
 	
-	protected void drawValue(Graphics g) {
+	protected void drawValue( Graphics g ) {
 		g.setColor( Color.WHITE );
 		Font oldFont = g.getFont();
 		g.setFont( g.getFont().deriveFont( drawFontSize ) );
@@ -84,7 +84,7 @@ public abstract class Device extends JPanel {
 		FontMetrics fm = g.getFontMetrics();
 		g.drawString( name, STATUS_WIDTH, fm.getAscent() );
 	}
-
+	
 	protected abstract Color selectStatusColor();
 	
 	protected void drawStatusLight( Graphics g ) {
