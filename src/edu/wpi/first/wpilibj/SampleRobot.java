@@ -1,8 +1,8 @@
 package edu.wpi.first.wpilibj;
 
-public class SimpleRobot extends RobotBase {
+public class SampleRobot extends RobotBase {
 	
-	protected SimpleRobot() {
+	protected SampleRobot() {
 		super();
 		robotMain();
 	}
